@@ -58,7 +58,7 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
+  res.status(err.status || 500); //this also handles the error thrown by the dishRouter.js file where the status is set to 404
   res.render('error');
 });
 
