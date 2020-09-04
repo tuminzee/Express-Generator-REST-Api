@@ -46,25 +46,40 @@ promoRouter.route('/')
 });
 
 promoRouter.route('/:promoId')
-.all((req,res,next) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-    next(); //to complete the middleware
-})
 .get((req,res,next) => {
-    res.end('Will send deatails of the promo ' + req.params.promoId + ' to you!');
+    Promotions.findById(req.params.promoId)
+    .then((promotion) => {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(promotion);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 })
 .post((req,res,next) => {
     res.statusCode = 403; //Operation not supported
     res.end('POST operation not supported on /promotions/'+ req.params.promoId);
 })
 .put((req,res,next) => {
-    res.write('Updating the promo:'+ req.params.promoId + '\n')
-    res.end('Will update the promo: '+ req.body.name + ' with details ' + req.body.description);
-
+   Promotions.findByIdAndUpdate(req.params.promoId, {
+       $set: req.body
+   }, {new:true}) //new:true will return to 
+   .then((promotion) => {
+       console.log('Updated the data');
+       res.statusCode = 200;
+       res.setHeader('Content-Type', 'application/json');
+       res.json(promotion);
+    }, (err) => next(err))
+    .catch((err) => next(err));
 })
 .delete((req,res,next) => {
-    res.end('Deleting the promo: ' + req.params.promoId);
+    Promotions.findByIdAndRemove(req.params.promoId)
+    .then((resp) => {
+        console.log(resp);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(resp)
+    }, (err) => next(err)
+    .catch((err) => next(err)))
 });
 
 
