@@ -7,6 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('confusionserver:server');
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
+
 
 /**
  * Get port from environment and store in Express.
@@ -14,6 +17,8 @@ var http = require('http');
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
+app.set('secPort', port+443); //http port 80, https 443 
+
 
 /**
  * Create HTTP server.
@@ -28,6 +33,20 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+var options = {
+  key: fs.readFileSync(__dirname + '/private.key'),
+  cert: fs.readFileSync(__dirname + '/certificate.pem'),
+};
+
+var secureServer = https.createServer(options, app);
+
+secureServer.listen( app.get('secPort'), () => {
+  console.log(`Secure Server listening on port ${app.get('secPort')}`);
+});
+
+secureServer.on('err', onError); //onError is defined down below
+secureServer.on('listening', onListening); //onListening is defined down below
 
 /**
  * Normalize a port into a number, string, or false.
