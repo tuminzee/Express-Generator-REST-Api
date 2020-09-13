@@ -33,7 +33,7 @@ uploadRouter.use(bodyParser.json());
 
 uploadRouter.route('/')
 .options( cors.corsWithOptions, (req, res) => {
-    res.sendStatus = 200;
+    res.sendStatus(200);
 })
 .get( cors.cors , authenticate.verifyUser,authenticate.verifyAdmin, (req, res, next) => {
     res.statusCode = 403;
