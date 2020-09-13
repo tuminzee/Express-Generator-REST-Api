@@ -1,0 +1,9 @@
+{
+"name": "tumin",
+"description": "desc",
+"image":"image.png",
+"category" : "catg",
+"label": "label",
+"price": 5,
+"featured": false
+}
